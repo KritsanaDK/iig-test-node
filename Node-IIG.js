@@ -57,3 +57,25 @@ app.get("/ksn", async (req, res) => {
   console.log("ksn");
   res.end();
 });
+
+const mysql = require("./connect_mysql");
+
+app.post("/logIn", async (req, res) => {
+
+  console.log("logIn")
+  try {
+
+    let user = req.query.user;
+    let pass = req.query.pass;
+    
+
+    let data = await mysql.logIn(user, pass);
+    console.log(data)
+    res.json(data);
+    res.end();
+  } catch (error) {
+    console.log(error)
+    res.end();
+  }
+  res.end();
+});
