@@ -75,3 +75,27 @@ app.post("/logIn", async (req, res) => {
     res.end();
   }
 });
+
+
+app.post("/reg_user", async (req, res) => {
+  console.log("reg_user");
+  console.log(req)
+  try {
+    let user = req.body.user;
+    let pass = req.body.pass;
+    let f_name = req.body.f_name;
+    let l_name = req.body.l_name;
+    let path_file = req.body.path_file;
+
+    let data = await mysql.reg_user(user, pass, f_name, l_name, path_file);
+    console.log(data);
+    await res.json(data);
+    res.end();
+  } catch (error) {
+    console.log(error);
+    res.end();
+  }
+});
+
+
+

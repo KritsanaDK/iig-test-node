@@ -8,6 +8,7 @@ const db_ = "iig_db";
 
 module.exports = {
   logIn,
+  reg_user,
 };
 
 var pool = mysql.createPool({
@@ -29,5 +30,17 @@ function logIn(user, pass) {
     if (result) {
       return result;
     }
-  } catch {}
+  } catch { }
 }
+
+function reg_user(user, pass, f_name, l_name, path_file) {
+  try {
+    let sql = "INSERT INTO reg_info (UserName, Password, FirstName, LastName, Path_file) VALUES ('" + user + "', '" + pass + "', '" + f_name + "', '" + l_name + "', '" + path_file + "');";
+    const result = pool.query(sql);
+    //   console.log(result);
+    if (result) {
+      return result;
+    }
+  } catch { }
+}
+
