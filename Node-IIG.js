@@ -63,8 +63,8 @@ const mysql = require("./connect_mysql");
 app.post("/logIn", async (req, res) => {
   console.log("logIn");
   try {
-    let user = req.query.user;
-    let pass = req.query.pass;
+    let user = req.body.user;
+    let pass = req.body.pass;
 
     let data = await mysql.logIn(user, pass);
     console.log(data);
@@ -76,10 +76,9 @@ app.post("/logIn", async (req, res) => {
   }
 });
 
-
 app.post("/reg_user", async (req, res) => {
   console.log("reg_user");
-  console.log(req)
+  console.log(req);
   try {
     let user = req.body.user;
     let pass = req.body.pass;
@@ -97,5 +96,19 @@ app.post("/reg_user", async (req, res) => {
   }
 });
 
+app.post("/check_pass", async (req, res) => {
+  console.log("check_pass");
+  console.log(req);
+  try {
+    let user = req.body.user;
+    let pass = req.body.pass;
 
-
+    let data = await mysql.check_pass(user, pass);
+    console.log(data);
+    await res.json(data);
+    res.end();
+  } catch (error) {
+    console.log(error);
+    res.end();
+  }
+});
