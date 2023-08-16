@@ -71,7 +71,7 @@ async function reg_user(user, pass, f_name, l_name, path_file) {
     return { "result": "ok" };
 
   } catch {
-    return { "result": "error" };
+    return { "result": "error2" };
   }
 }
 
