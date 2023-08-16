@@ -84,14 +84,14 @@ app.post("/reg_user", async (req, res) => {
     let pass = req.body.pass;
     let f_name = req.body.f_name;
     let l_name = req.body.l_name;
-    let path_file = req.body.path_file;
+    let file_name = req.body.file_name;
 
-    let data = await mysql.reg_user(user, pass, f_name, l_name, path_file);
-    console.log(data);
+    let data = await mysql.reg_user(user, pass, f_name, l_name, file_name);
+    // console.log(data);
     await res.json(data);
     res.end();
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.end();
   }
 });
@@ -113,8 +113,6 @@ app.post("/check_pass", async (req, res) => {
   }
 });
 
-
-
 app.post("/update_user", async (req, res) => {
   console.log("update_user");
   console.log(req.body);
@@ -123,9 +121,9 @@ app.post("/update_user", async (req, res) => {
     let pass = req.body.pass;
     let f_name = req.body.f_name;
     let l_name = req.body.l_name;
-    let path_file = req.body.path_file;
+    let file_name = req.body.file_name;
 
-    let data = await mysql.update_user(user, pass, f_name, l_name, path_file);
+    let data = await mysql.update_user(user, pass, f_name, l_name, file_name);
     console.log(data);
     await res.json(data);
     res.end();
@@ -134,6 +132,3 @@ app.post("/update_user", async (req, res) => {
     res.end();
   }
 });
-
-
-
