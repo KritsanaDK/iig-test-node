@@ -1,5 +1,6 @@
 var mysql = require("mysql2");
 const util = require("util");
+const bcrypt = require("bcrypt")
 
 const host_ = "localhost";
 const user_ = "root";
@@ -25,7 +26,12 @@ var pool = mysql.createPool({
 pool.query = util.promisify(pool.query);
 
 function logIn(user, pass) {
+
+
   try {
+
+    pass = HastEncode(pass, 10);
+
     let sql =
       "SELECT * FROM reg_user WHERE UserName='" +
       user +
@@ -43,6 +49,9 @@ function logIn(user, pass) {
 
 async function reg_user(user, pass, f_name, l_name, path_file) {
   try {
+
+    pass = HastEncode(pass, 10);
+
     let sql =
       "INSERT INTO reg_user (UserName, Password, FirstName, LastName, Path_file) VALUES ('" +
       user +
@@ -76,7 +85,11 @@ async function reg_user(user, pass, f_name, l_name, path_file) {
 }
 
 function check_pass(user, pass) {
+
   try {
+
+    pass = HastEncode(pass, 10);
+
     let sql =
       "select * from(SELECT * FROM reg_his where reg_his.UserName = '" +
       user +
@@ -97,6 +110,8 @@ function check_pass(user, pass) {
 
 async function update_user(user, pass, f_name, l_name, path_file) {
   try {
+
+    pass = HastEncode(pass, 10);
 
     if (pass == "") {
       let temp_img = "";
@@ -145,3 +160,19 @@ async function update_user(user, pass, f_name, l_name, path_file) {
     return { "result": "error" };
   }
 }
+
+function HastEncode(password, saltRounds) {
+
+  bcrypt
+    .hash(password, saltRounds)
+    .then(hash => {
+      console.log('Hash ', hash)
+      return hash;
+    })
+    .catch(err => {
+      console.error(err.message)
+      return err.message;
+    })
+}
+
+HastEncode("ssssss", 10);
