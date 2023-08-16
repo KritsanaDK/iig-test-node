@@ -10,6 +10,7 @@ module.exports = {
   logIn,
   reg_user,
   check_pass,
+  update_user,
 };
 
 var pool = mysql.createPool({
@@ -26,20 +27,21 @@ pool.query = util.promisify(pool.query);
 function logIn(user, pass) {
   try {
     let sql =
-      "SELECT * FROM reg_user WHERE Username='" +
+      "SELECT * FROM reg_user WHERE UserName='" +
       user +
       "' AND Password='" +
       pass +
       "';";
+    console.log(sql)
     const result = pool.query(sql);
-    //   console.log(result);
+    console.log(result);
     if (result) {
       return result;
     }
-  } catch {}
+  } catch { }
 }
 
-function reg_user(user, pass, f_name, l_name, path_file) {
+async function reg_user(user, pass, f_name, l_name, path_file) {
   try {
     let sql =
       "INSERT INTO reg_user (UserName, Password, FirstName, LastName, Path_file) VALUES ('" +
@@ -53,7 +55,8 @@ function reg_user(user, pass, f_name, l_name, path_file) {
       "', '" +
       path_file +
       "');";
-    const result = pool.query(sql);
+
+    await pool.query(sql);
     //   console.log(result);
 
     sql =
@@ -62,18 +65,20 @@ function reg_user(user, pass, f_name, l_name, path_file) {
       "', '" +
       pass +
       "');";
-    result = pool.query(sql);
+    await pool.query(sql);
 
-    if (result) {
-      return result;
-    }
-  } catch {}
+
+    return { "result": "ok" };
+
+  } catch {
+    return { "result": "error" };
+  }
 }
 
 function check_pass(user, pass) {
   try {
     let sql =
-      "select * from(SELECT * FROM reg_his where reg_his.Username = '" +
+      "select * from(SELECT * FROM reg_his where reg_his.UserName = '" +
       user +
       "' order by Date_Time asc) tb1 WHERE tb1.Password = '" +
       pass +
@@ -85,5 +90,58 @@ function check_pass(user, pass) {
     if (result) {
       return result;
     }
-  } catch {}
+  } catch { }
+}
+
+
+
+async function update_user(user, pass, f_name, l_name, path_file) {
+  try {
+
+    if (pass == "") {
+      let temp_img = "";
+      if (path_file != undefined) {
+        temp_img = ", Path_file = '" + path_file + "'";
+
+      }
+
+      let sql = "UPDATE reg_user SET FirstName = '" + f_name + "', LastName = '" + l_name + "' " + temp_img + " WHERE UserName = '" + user + "';"
+      const result = await pool.query(sql);
+      if (result) {
+        return { "result": "ok" };
+      }
+      else {
+        return { "result": "error" };
+      }
+
+    }
+    else {
+      let sql = "SELECT * FROM(SELECT * FROM reg_his WHERE UserName = '" + user + "' ORDER BY Date_Time DESC) tb1 WHERE tb1.Password = '" + pass + "' LIMIT 3;";
+      const result = await pool.query(sql);
+
+      console.log(result.length)
+
+      if (result.length != 0) {
+        return { "result": "error" };
+      }
+      else {
+        let sql_a = "INSERT INTO reg_his (UserName, Password) VALUES ('" + user + "', '" + pass + "');";
+        await pool.query(sql_a);
+
+        let temp_img = "";
+        if (path_file != undefined) {
+          temp_img = ", Path_file = '" + path_file + "'";
+
+        }
+
+        let sql_b = "UPDATE reg_user SET Password='" + pass + "',FirstName = '" + f_name + "', LastName = '" + l_name + "' " + temp_img + " WHERE UserName = '" + user + "';"
+        await pool.query(sql_b);
+
+        return { "result": "ok" };
+      }
+    }
+
+  } catch {
+    return { "result": "error" };
+  }
 }

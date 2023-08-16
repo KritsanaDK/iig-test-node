@@ -112,3 +112,28 @@ app.post("/check_pass", async (req, res) => {
     res.end();
   }
 });
+
+
+
+app.post("/update_user", async (req, res) => {
+  console.log("update_user");
+  console.log(req.body);
+  try {
+    let user = req.body.user;
+    let pass = req.body.pass;
+    let f_name = req.body.f_name;
+    let l_name = req.body.l_name;
+    let path_file = req.body.path_file;
+
+    let data = await mysql.update_user(user, pass, f_name, l_name, path_file);
+    console.log(data);
+    await res.json(data);
+    res.end();
+  } catch (error) {
+    console.log(error);
+    res.end();
+  }
+});
+
+
+
