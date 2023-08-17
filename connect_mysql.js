@@ -144,6 +144,7 @@ async function update_user(user, pass, f_name, l_name, file_name) {
         return { result: "error" };
       }
     } else {
+      pass = encrypt(pass);
       let sql =
         "SELECT * FROM(SELECT * FROM reg_his WHERE UserName = '" +
         user +
@@ -157,8 +158,6 @@ async function update_user(user, pass, f_name, l_name, file_name) {
       if (result.length != 0) {
         return { result: "error" };
       } else {
-        pass = encrypt(pass);
-
         let sql_a =
           "INSERT INTO reg_his (UserName, Password) VALUES ('" +
           user +
