@@ -12,8 +12,13 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
     "express": "^4.18.2",
+    "express-fileupload": "^1.4.0",
     "hash.js": "^1.1.7",
+    "lodash": "^4.17.21",
+    "morgan": "^1.10.0",
     "mysql2": "^3.6.0",
     "nodemon": "^3.0.1",
     "utill": "^0.1.3",

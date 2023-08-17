@@ -1,9 +1,25 @@
-const express = require("express");
+const express = require('express');
+const fileUpload = require('express-fileupload');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
+const _ = require('lodash');
+
 const app = express();
 const port = 6180;
 
-app.use(express.json()); // for parsing application/json
-app.use(express.urlencoded({ extended: true }));
+
+// enable files upload
+app.use(fileUpload({
+  createParentPath: true
+}));
+
+//add other middleware
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+app.use(express.static(__dirname + '/uploads'));
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
@@ -53,6 +69,10 @@ app.all("*", function (req, res, next) {
   }
 });
 
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/index.html');
+})
+
 app.get("/ksn", async (req, res) => {
   console.log("ksn");
   res.end();
@@ -87,6 +107,14 @@ app.post("/reg_user", async (req, res) => {
     let file_name = req.body.file_name;
 
     let data = await mysql.reg_user(user, pass, f_name, l_name, file_name);
+
+    if (req.files) {
+      let avatar = req.files.file;
+      avatar.mv('./uploads/' + avatar.name);
+    }
+
+
+
     // console.log(data);
     await res.json(data);
     res.end();
@@ -124,6 +152,13 @@ app.post("/update_user", async (req, res) => {
     let file_name = req.body.file_name;
 
     let data = await mysql.update_user(user, pass, f_name, l_name, file_name);
+
+    if (req.files) {
+      let avatar = req.files.file;
+      avatar.mv('./uploads/' + avatar.name);
+    }
+
+
     console.log(data);
     await res.json(data);
     res.end();
