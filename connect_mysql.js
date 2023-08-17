@@ -1,8 +1,11 @@
+/*
+  @Author   : Kritsana  Wathaniyanon
+  @Date     : 2023-08-17
+ */
 var mysql = require("mysql2");
 const util = require("util");
-//Checking the crypto module
 const crypto = require("crypto");
-const algorithm = "aes-256-cbc"; //Using AES encryption
+const algorithm = "aes-256-cbc";
 const key = crypto.randomBytes(32);
 const iv = crypto.randomBytes(16);
 var hash = require("hash.js");
@@ -15,7 +18,6 @@ const db_ = "iig_db";
 module.exports = {
   logIn,
   reg_user,
-  check_pass,
   update_user,
 };
 
@@ -29,6 +31,14 @@ var pool = mysql.createPool({
 });
 
 pool.query = util.promisify(pool.query);
+
+/*
+  @Purpose : Check Login
+  @Input   : user as string
+           : pass as string
+  @Output  : array object 
+                Exam >> [{UserName: 'UserName' , Password :'Password', FirstName:'FirstName', LastName:'LastName', file_name:'file_name'}]
+ */
 
 function logIn(user, pass) {
   try {
@@ -50,6 +60,18 @@ function logIn(user, pass) {
     return { result: "error" };
   }
 }
+
+/*
+  @Purpose  : Register User
+  @Input    : user as string
+            : pass as string
+            : f_name as string
+            : l_name as string
+            : file_name as string
+  @Output   : array 
+                Exam >> {result: 'ok'}
+                Exam >> {result: 'error'}
+ */
 
 function reg_user(user, pass, f_name, l_name, file_name) {
   try {
@@ -81,29 +103,21 @@ function reg_user(user, pass, f_name, l_name, file_name) {
 
     return { result: "ok" };
   } catch {
-    return { result: "error2" };
+    return { result: "error" };
   }
 }
 
-function check_pass(user, pass) {
-  try {
-    pass = encrypt(pass);
-
-    let sql =
-      "select * from(SELECT * FROM reg_his where reg_his.UserName = '" +
-      user +
-      "' order by Date_Time asc) tb1 WHERE tb1.Password = '" +
-      pass +
-      "' limit 5;";
-
-    console.log(sql);
-    const result = pool.query(sql);
-    //   console.log(result);
-    if (result) {
-      return result;
-    }
-  } catch {}
-}
+/*
+  @Purpose : Update User  & Check password duplicate from 5 time ago
+  @Input   : user as string
+           : pass as string
+           : f_name as string
+           : l_name as string
+           : file_name as string
+  @Output  : array 
+                Exam >> {result: 'ok'}
+                Exam >> {result: 'error'}
+ */
 
 async function update_user(user, pass, f_name, l_name, file_name) {
   try {
@@ -180,25 +194,7 @@ async function update_user(user, pass, f_name, l_name, file_name) {
   }
 }
 
-//Encrypting text
 function encrypt(text) {
-  // let cipher = crypto.createCipheriv("aes-256-cbc", Buffer.from(key), iv);
-  // let encrypted = cipher.update(text);
-  // encrypted = Buffer.concat([encrypted, cipher.final()]);
-  // return { iv: iv.toString("hex"), encryptedData: encrypted.toString("hex") };
-  // return encrypted.toString("hex");
-
   var sha512 = require("hash.js/lib/hash/sha/512");
-
   return sha512().update(text).digest("hex");
-}
-
-// Decrypting text
-function decrypt(text) {
-  let iv = Buffer.from(text.iv, "hex");
-  let encryptedText = Buffer.from(text.encryptedData, "hex");
-  let decipher = crypto.createDecipheriv("aes-256-cbc", Buffer.from(key), iv);
-  let decrypted = decipher.update(encryptedText);
-  decrypted = Buffer.concat([decrypted, decipher.final()]);
-  return decrypted.toString();
 }
