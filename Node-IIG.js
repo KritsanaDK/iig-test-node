@@ -1,25 +1,26 @@
-const express = require('express');
-const fileUpload = require('express-fileupload');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const morgan = require('morgan');
-const _ = require('lodash');
+const express = require("express");
+const fileUpload = require("express-fileupload");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const morgan = require("morgan");
+const _ = require("lodash");
 
 const app = express();
 const port = 6180;
 
-
 // enable files upload
-app.use(fileUpload({
-  createParentPath: true
-}));
+app.use(
+  fileUpload({
+    createParentPath: true,
+  })
+);
 
 //add other middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(morgan('dev'));
-app.use(express.static(__dirname + '/uploads'));
+app.use(morgan("dev"));
+app.use(express.static(__dirname + "/uploads"));
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
@@ -69,9 +70,9 @@ app.all("*", function (req, res, next) {
   }
 });
 
-app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/index.html');
-})
+app.get("/", function (req, res) {
+  res.sendFile(__dirname + "/index.html");
+});
 
 app.get("/ksn", async (req, res) => {
   console.log("ksn");
@@ -110,33 +111,14 @@ app.post("/reg_user", async (req, res) => {
 
     if (req.files) {
       let avatar = req.files.file;
-      avatar.mv('./uploads/' + avatar.name);
+      avatar.mv("./uploads/" + avatar.name);
     }
-
-
 
     // console.log(data);
     await res.json(data);
     res.end();
   } catch (error) {
     // console.log(error);
-    res.end();
-  }
-});
-
-app.post("/check_pass", async (req, res) => {
-  console.log("check_pass");
-  console.log(req);
-  try {
-    let user = req.body.user;
-    let pass = req.body.pass;
-
-    let data = await mysql.check_pass(user, pass);
-    console.log(data);
-    await res.json(data);
-    res.end();
-  } catch (error) {
-    console.log(error);
     res.end();
   }
 });
@@ -155,9 +137,8 @@ app.post("/update_user", async (req, res) => {
 
     if (req.files) {
       let avatar = req.files.file;
-      avatar.mv('./uploads/' + avatar.name);
+      avatar.mv("./uploads/" + avatar.name);
     }
-
 
     console.log(data);
     await res.json(data);
