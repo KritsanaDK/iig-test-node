@@ -148,9 +148,11 @@ async function update_user(user, pass, f_name, l_name, file_name) {
       let sql =
         "SELECT * FROM(SELECT * FROM reg_his WHERE UserName = '" +
         user +
-        "' ORDER BY Date_Time DESC) tb1 WHERE tb1.Password = '" +
+        "' ORDER BY Date_Time DESC  LIMIT 5) tb1 WHERE tb1.Password = '" +
         pass +
-        "' LIMIT 5;";
+        "';";
+
+      console.log(sql)
       const result = await pool.query(sql);
 
       console.log(result.length);
